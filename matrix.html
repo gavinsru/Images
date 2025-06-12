@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Matrix Code Rain Fullscreen</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      background: black;
+    }
+    canvas {
+      display: block;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: black;
+      filter: drop-shadow(0 0 5px #0F0);
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+  <script>
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+
+    // Set canvas size to fill window
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Characters to use
+    const letters = 'アァイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+    const fontSize = 18;
+    let columns = Math.floor(canvas.width / fontSize);
+
+    // Drops - one y position per column
+    let drops = [];
+    function initDrops() {
+      columns = Math.floor(canvas.width / fontSize);
+      drops = [];
+      for (let x = 0; x < columns; x++) {
+        drops[x] = Math.random() * canvas.height / fontSize;
+      }
+    }
+    initDrops();
+
+    // Redraw on resize
+    window.addEventListener('resize', () => {
+      initDrops();
+    });
+
+    function draw() {
+      // Black background with slight opacity for fade effect
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#0F0';
+      ctx.font = fontSize + 'px monospace';
+      ctx.shadowColor = '#00FF00';
+      ctx.shadowBlur = 8;
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters.charAt(Math.floor(Math.random() * letters.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        drops[i]++;
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+      }
+    }
+
+    setInterval(draw, 30);
+  </script>
+</body>
+</html>
